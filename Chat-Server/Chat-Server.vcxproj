@@ -19,10 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{EDFA410A-5980-4AD8-8B3A-376F60146ED9}</ProjectGuid>
-    <RootNamespace>Chat</RootNamespace>
+    <ProjectGuid>{F7FA36DA-779B-48C6-865F-316EE9D62EBB}</ProjectGuid>
+    <RootNamespace>ChatServer</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
-    <ProjectName>Chat-Client</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
