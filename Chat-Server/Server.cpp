@@ -14,7 +14,7 @@ void Server::acceptMessages()
 	{
 		if (!e)
 		{
-			parseMessage();
+			std::make_shared<session>(std::move(socket))->start();
 		}
 		acceptMessages();
 	});
