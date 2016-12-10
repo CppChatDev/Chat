@@ -1,4 +1,5 @@
 #include "Server.h"
+#include "Session.h"
 
 
 Server::Server(boost::asio::io_service & io_service, short port) 
@@ -14,16 +15,8 @@ void Server::acceptMessages()
 	{
 		if (!e)
 		{
-			std::make_shared<session>(std::move(socket))->start();
+			std::make_shared<Session>(std::move(socket))->start();
 		}
 		acceptMessages();
-	});
-}
-
-void Server::parseMessage()
-{
-	socket.async_read_some(boost::asio::buffer(message_buffer), [this](boost::system::error_code e, std::size_t length)
-	{
-		std::cout << "I heard something!\n";
 	});
 }
