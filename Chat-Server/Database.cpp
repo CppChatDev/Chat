@@ -13,7 +13,6 @@ Database::~Database()
 
 std::vector<db_element> Database::execute(std::string query)
 {
-	char *zErrMsg = nullptr;
 	auto sql_callback = [](void *data, int argc, char **argv, char **cols) -> int
 	{
 		db_element element;
@@ -25,12 +24,15 @@ std::vector<db_element> Database::execute(std::string query)
 	};
 
 	std::vector<db_element> items;
+	char *err_msg = nullptr;
 
 	/* Execute SQL statement */
-	auto rc = sqlite3_exec(db, query.c_str(), sql_callback, &items, &zErrMsg);
+	auto rc = sqlite3_exec(db, query.c_str(), sql_callback, &items, &err_msg);
 	if (rc != SQLITE_OK) {
-		fprintf(stderr, "SQL error: %s\n", zErrMsg); // TODO: throw exception?
-		sqlite3_free(zErrMsg);
+		std::exception e(err_msg);
+		sqlite3_free(err_msg);
+
+		throw e;
 	}
 
 	return items;
