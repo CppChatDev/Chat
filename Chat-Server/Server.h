@@ -6,6 +6,7 @@
 #include <memory>
 #include <utility>
 #include <boost/asio.hpp>
+#include <sqlite3.h>
 
 using boost::asio::ip::tcp;
 

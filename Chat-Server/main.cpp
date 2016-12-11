@@ -2,12 +2,29 @@
 #include <string>
 #include <vector>
 #include "Server.h"
+#include "Database.h"
 #include <boost/asio.hpp>
 
 using boost::asio::ip::tcp;
 
 int main(int argc, char** argv)
 {
+	try
+	{
+		Database db;
+		db.execute("SELECT * FROM test", [](std::vector<std::string> fields, std::vector<std::string> cols)
+		{
+			for (int i = 0; i < fields.size(); i++)
+			{
+				std::cout << fields[i] << " " << cols[i] << std::endl;
+			}
+		});
+	}
+	catch(std::exception e)
+	{
+		std::cout << e.what();
+	}
+
 	boost::asio::io_service io_service;
 	//tcp::acceptor acceptor(io_service, tcp::endpoint(tcp::v4(), 1234));
 
