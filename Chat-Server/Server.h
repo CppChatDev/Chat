@@ -6,6 +6,7 @@
 #include <memory>
 #include <utility>
 #include <boost/asio.hpp>
+#include <sqlite3.h>
 
 using boost::asio::ip::tcp;
 
@@ -20,5 +21,6 @@ private:
 	tcp::acceptor acceptor;
 	tcp::socket socket;
 	std::vector<char> message_buffer;
+	sqlite3* db;
 };
 
