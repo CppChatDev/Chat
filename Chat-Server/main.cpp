@@ -12,13 +12,11 @@ int main(int argc, char** argv)
 	try
 	{
 		Database db;
-		db.execute("SELECT * FROM test", [](std::vector<std::string> fields, std::vector<std::string> cols)
-		{
-			for (int i = 0; i < fields.size(); i++)
-			{
-				std::cout << fields[i] << " " << cols[i] << std::endl;
-			}
-		});
+		auto elements = db.execute("SELECT * FROM test;");
+
+		for(auto &element : elements)
+			for (auto &col : element)
+				std::cout << col.first << " " << col.second << std::endl;
 	}
 	catch(std::exception e)
 	{

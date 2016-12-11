@@ -1,10 +1,10 @@
 #pragma once
 #include <sqlite3.h>
 #include <string>
-#include <functional>
 #include <vector>
+#include <map>
 
-using callback_type = std::function<void(std::vector<std::string>, std::vector<std::string>)>;
+using db_element = std::map<std::string, std::string>;
 
 class Database
 {
@@ -12,7 +12,7 @@ public:
 	Database();
 	~Database();
 
-	void execute(std::string query, callback_type callback);
+	std::vector<db_element> execute(std::string query);
 private:
 	sqlite3* db;
 };

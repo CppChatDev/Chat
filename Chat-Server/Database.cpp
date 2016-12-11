@@ -11,25 +11,27 @@ Database::~Database()
 	sqlite3_close(db);
 }
 
-void Database::execute(std::string query, callback_type callback)
+std::vector<db_element> Database::execute(std::string query)
 {
 	char *zErrMsg = nullptr;
-	auto sql_callback = [](void *out_callback, int argc, char **argv, char **cols) -> int
+	auto sql_callback = [](void *data, int argc, char **argv, char **cols) -> int
 	{
-		std::vector<std::string> col_names(cols, cols + argc);
-		std::vector<std::string> fields(argv, argv + argc);
+		db_element element;
+		for (auto i = 0; i < argc; i++)
+			element[cols[i]] = argv[i];
 
-		callback_type* callback = reinterpret_cast<callback_type*>(out_callback);
-
-		(*callback)(col_names, fields);
-
+		reinterpret_cast<std::vector<db_element>*>(data)->push_back(element);
 		return 0;
 	};
 
+	std::vector<db_element> items;
+
 	/* Execute SQL statement */
-	auto rc = sqlite3_exec(db, query.c_str(), sql_callback, &callback, &zErrMsg);
+	auto rc = sqlite3_exec(db, query.c_str(), sql_callback, &items, &zErrMsg);
 	if (rc != SQLITE_OK) {
 		fprintf(stderr, "SQL error: %s\n", zErrMsg); // TODO: throw exception?
 		sqlite3_free(zErrMsg);
 	}
+
+	return items;
 }
