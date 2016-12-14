@@ -15,7 +15,9 @@ void Server::acceptMessages()
 	{
 		if (!e)
 		{
-			std::make_shared<Session>(std::move(socket))->start();
+			// after std::move socket is in same state as it would be
+			// after caling socket(io_service)
+			std::make_shared<Session>(std::move(socket), room)->start();
 		}
 		acceptMessages();
 	});

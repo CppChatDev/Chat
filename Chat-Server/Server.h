@@ -1,12 +1,8 @@
 #pragma once
 
-#include <iostream>
-#include <cstdlib>
-#include <iostream>
-#include <memory>
-#include <utility>
 #include <boost/asio.hpp>
-#include <sqlite3.h>
+
+#include "ChatRoom.h"
 
 using boost::asio::ip::tcp;
 
@@ -20,6 +16,6 @@ private:
 
 	tcp::acceptor acceptor;
 	tcp::socket socket;
-	std::vector<char> message_buffer;
+	ChatRoom room;
 };
 

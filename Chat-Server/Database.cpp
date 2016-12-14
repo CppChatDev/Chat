@@ -1,9 +1,9 @@
 #include "Database.h"
 
-Database::Database()
+Database::Database(std::string db_name)
 {
-	if (sqlite3_open("database.db", &db) != SQLITE_OK)
-		throw std::exception("There was a problem opening the database. Exiting!");
+	if (sqlite3_open(db_name.c_str(), &db) != SQLITE_OK)
+		throw std::exception("There was a problem opening the database.");
 }
 
 Database::~Database()

@@ -27,15 +27,24 @@
     <ClCompile Include="Database.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ChatRoom.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Server.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Database.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Session.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Database.h">
+    <ClInclude Include="ChatRoom.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ChatParticipant.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

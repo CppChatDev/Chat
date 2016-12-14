@@ -1,28 +1,31 @@
 #pragma once
 
-#include <cstdlib>
-#include <iostream>
 #include <memory>
-#include <utility>
 #include <vector>
+#include <queue>
 #include <boost/asio.hpp>
 
-using boost::asio::ip::tcp;
+#include "ChatParticipant.h"
+#include "ChatRoom.h"
 
-class Session : public std::enable_shared_from_this<Session>
+using boost::asio::ip::tcp;
+using Msg = std::vector<char>;
+using MsgQueue = std::queue<Msg>;
+
+class Session : public ChatParticipant, public std::enable_shared_from_this<Session>
 {
 public:
-	Session(tcp::socket socket) : session_socket(std::move(socket)), data(1024)
-	{
-	}
+	Session(tcp::socket socket, ChatRoom& room);
 
 	void start();
+	void deliver(const Msg& msg) override;
 
 private:
 	void do_read();
-	void do_write(std::size_t length);
+	void do_write();
 
 	tcp::socket session_socket;
-	std::vector<char> data;
+	MsgQueue msg_queue;
+	Msg data;
+	ChatRoom& room;
 };
-
