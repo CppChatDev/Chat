@@ -2,9 +2,9 @@
 #include "Session.h"
 
 
-Server::Server(boost::asio::io_service & io_service, short port) 
-	: acceptor(io_service, tcp::endpoint(tcp::v4(), port)), 
-	  socket(io_service)
+Server::Server(boost::asio::io_service & io_service, short port)
+	: acceptor(io_service, tcp::endpoint(tcp::v4(), port)),
+	socket(io_service)
 {
 	acceptMessages();
 }

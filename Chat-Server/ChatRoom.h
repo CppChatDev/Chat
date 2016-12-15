@@ -11,7 +11,7 @@ class ChatRoom
 public:
 	void join(ChatParticipantRef participant);
 	void leave(ChatParticipantRef participant);
-	void deliver(std::vector<char> msg);
+	void deliver(const Message& msg);
 
 private:
 	std::vector<ChatParticipantRef> participants;
