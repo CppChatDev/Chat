@@ -1,23 +1,11 @@
 #include "Message.h"
 
-Message::Message(size_t size) : data(size)
+Message::Message(size_t size) : data_(size)
 {
 
 }
 
-boost::asio::mutable_buffers_1 Message::buffer()
+std::vector<char>& Message::data()
 {
-	return boost::asio::buffer(data);
+	return data_;
 }
-
-boost::asio::mutable_buffers_1 Message::empty_buffer()
-{
-	// data.clear();
-	return boost::asio::buffer(data);
-}
-
-size_t Message::length() const
-{
-	return data.size();
-}
-

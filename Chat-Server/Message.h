@@ -7,11 +7,8 @@ class Message
 {
 public:
 	Message(size_t size);
-	size_t length() const;
-
-	boost::asio::mutable_buffers_1 buffer();
-	boost::asio::mutable_buffers_1 empty_buffer();
+	std::vector<char>& data();
 
 private:
-	std::vector<char> data;
+	std::vector<char> data_;
 };

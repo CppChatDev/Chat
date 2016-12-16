@@ -21,12 +21,14 @@ void Session::deliver(const Message& msg)
 void Session::do_read()
 {
 	auto self(shared_from_this());
-	session_socket.async_read_some(msg.empty_buffer(),
+	session_socket.async_read_some(boost::asio::buffer(msg.data()),
 		[this, self](boost::system::error_code ec, std::size_t length)
 	{
 		if (!ec)
 		{
 			room.deliver(msg);
+			msg.data().resize(length);
+
 			do_read();
 		}
 		else
@@ -40,7 +42,7 @@ void Session::do_read()
 void Session::do_write()
 {
 	auto self(shared_from_this());
-	boost::asio::async_write(session_socket, msg_queue.front().buffer(),
+	boost::asio::async_write(session_socket, boost::asio::buffer(msg_queue.front().data()),
 		[this, self](boost::system::error_code ec, std::size_t length)
 	{
 		if (!ec)
