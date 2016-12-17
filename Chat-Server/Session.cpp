@@ -1,7 +1,7 @@
 #include "Session.h"
 
 Session::Session(tcp::socket socket, ChatRoom& room)
-	: session_socket(std::move(socket)), msg(max_msg_length), room(room)
+	: session_socket(std::move(socket)), room(room), buffer(buffer_size)
 {
 
 }
@@ -21,19 +21,30 @@ void Session::deliver(const Message& msg)
 void Session::do_read()
 {
 	auto self(shared_from_this());
-	session_socket.async_read_some(boost::asio::buffer(msg.data()),
-		[this, self](boost::system::error_code ec, std::size_t length)
+	session_socket.async_read_some(boost::asio::buffer(buffer),
+		[this, self](boost::system::error_code ec, size_t length)
 	{
 		if (!ec)
 		{
-			room.deliver(msg);
-			msg.data().resize(length);
+			buffer.resize(length);
+			Message msg(buffer);
 
-			do_read();
+			//TODO - handle message
+			if(msg.get_code() == Message::code_type::exit)
+			{
+				room.leave(self);
+				session_socket.close();
+				return;
+			}
+			else
+			{
+				room.deliver(msg);
+
+				do_read();
+			}
 		}
 		else
 		{
-			// TODO
 			room.leave(self);
 		}
 	});
@@ -42,8 +53,8 @@ void Session::do_read()
 void Session::do_write()
 {
 	auto self(shared_from_this());
-	boost::asio::async_write(session_socket, boost::asio::buffer(msg_queue.front().data()),
-		[this, self](boost::system::error_code ec, std::size_t length)
+	boost::asio::async_write(session_socket, msg_queue.front().to_buffers(),
+		[this, self](boost::system::error_code ec, size_t length)
 	{
 		if (!ec)
 		{
@@ -55,8 +66,8 @@ void Session::do_write()
 		}
 		else
 		{
-			// TODO
 			room.leave(self);
 		}
 	});
 }
+

@@ -116,6 +116,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ChatParticipant.cpp" />
     <ClCompile Include="ChatRoom.cpp" />
     <ClCompile Include="Database.cpp" />
     <ClCompile Include="main.cpp" />

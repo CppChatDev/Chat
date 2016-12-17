@@ -9,12 +9,10 @@
 #include "ChatRoom.h"
 
 using boost::asio::ip::tcp;
-using MsgQueue = std::queue<Message>;
 
 class Session : public ChatParticipant, public std::enable_shared_from_this<Session>
 {
 public:
-	size_t max_msg_length = 1024;
 	Session(tcp::socket socket, ChatRoom& room);
 
 	void start();
@@ -25,7 +23,9 @@ private:
 	void do_write();
 
 	tcp::socket session_socket;
-	MsgQueue msg_queue;
-	Message msg;
+	std::queue<Message> msg_queue;
 	ChatRoom& room;
+
+	const size_t buffer_size = 1024;
+	std::vector<char> buffer;
 };
