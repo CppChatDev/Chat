@@ -27,7 +27,8 @@ void Session::do_read()
 		if (!ec)
 		{
 			buffer.resize(length);
-			Message msg(buffer);
+			Message msg(move(buffer)); 
+			// raw buffer is not needed anymore, after std::move vector is reusable
 
 			//TODO - handle message
 			if(msg.get_code() == Message::code_type::exit)

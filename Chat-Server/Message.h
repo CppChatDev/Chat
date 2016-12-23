@@ -8,16 +8,15 @@ class Message
 public:
 	enum class code_type
 	{
-		undefined,
-		exit,
-		login
+		undefined = '0',
 		// ...
+		exit = '9'
 	};
 
 	// create message, specifing it's type (code) and data
 	Message(code_type code, std::vector<char> data);
 
-	//create message from raw data (data read from network)
+	//create message from raw data (data read from network) - need to extract code
 	Message(std::vector<char> data);
 
 	// get buffer to data

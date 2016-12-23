@@ -1,27 +1,24 @@
 #include "Message.h"
 
-
-Message::Message(code_type code, std::vector<char> data): data(data), code(code)
+// vectored is passed by value and moved so it covers 2 cases:
+// - when vector is passed by value there is copy constrcutor and then moving constructor involved
+// - when vector is passed by r-reference 2 copy constructors are involved
+// 2 ctrs - one taking 'const vector&' and one 'vector&&' would be more efficient(but more writing)
+Message::Message(code_type code, std::vector<char> data): data(move(data)), code(code)
 {
 }
 
 Message::Message(std::vector<char> data): data(data)
 {
-	// get index of separator, message format is: code^data where ^ is separator
-	auto sep_index = find(data.begin(), data.end(), separator);
-
-	if(sep_index == data.end())
-	{
+	auto c = static_cast<code_type>(data[0]);
+	if (c <= code_type::undefined || c > code_type::exit)
 		code = code_type::undefined;
-	}
 	else
 	{
-		std::string code_str(data.begin(), sep_index);
-		code = static_cast<code_type>(stoi(code_str));
-		data.erase(data.begin(), sep_index);
-
-		// TODO - stronger check, catch invalid_argument exception
+		code = c;
+		data.erase(data.begin(), data.begin() + 1);
 	}
+	
 }
 
 boost::asio::const_buffers_1 Message::to_buffers()
