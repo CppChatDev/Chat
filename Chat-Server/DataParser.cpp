@@ -10,7 +10,11 @@ DataParser::code_type DataParser::parse_data(std::vector<char>& data)
 		return code_type::non_control;
 	}
 
-	return static_cast<code_type>(data[0]);
+	auto code = static_cast<code_type>(data[0]);
+	if (code < code_type::non_control || code > code_type::exit)
+		return code_type::non_control;
+
+	return code;
 }
 
 std::vector<char> DataParser::make_command(code_type code)
