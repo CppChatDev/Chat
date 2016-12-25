@@ -1,4 +1,5 @@
 #include "Session.h"
+#include "DataParser.h"
 
 Session::Session(tcp::socket socket, ChatRoom& room)
 	: session_socket(std::move(socket)), room(room), buffer(buffer_size)
@@ -21,26 +22,31 @@ void Session::deliver(const Message& msg)
 void Session::do_read()
 {
 	auto self(shared_from_this());
+	buffer.resize(buffer_size);
 	session_socket.async_read_some(boost::asio::buffer(buffer),
 		[this, self](boost::system::error_code ec, size_t length)
 	{
 		if (!ec)
 		{
 			buffer.resize(length);
-			Message msg(move(buffer)); 
-			// raw buffer is not needed anymore, after std::move vector is reusable
 
-			//TODO - handle message
-			if(msg.get_code() == Message::code_type::exit)
+			auto code = DataParser::parse_data(buffer);
+			if(code == DataParser::code_type::non_control)
+			{
+				// raw buffer is not needed anymore, after std::move vector is reusable
+				Message msg(move(buffer)); 
+
+				room.deliver(msg, self);
+				do_read();
+			}
+			else if(code == DataParser::code_type::exit)
 			{
 				room.leave(self);
 				session_socket.close();
-				return;
 			}
 			else
 			{
-				room.deliver(msg);
-
+				// TODO: handle codes
 				do_read();
 			}
 		}

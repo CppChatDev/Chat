@@ -6,27 +6,13 @@
 class Message
 {
 public:
-	enum class code_type
-	{
-		undefined = '0',
-		// ...
-		exit = '9'
-	};
-
-	// create message, specifing it's type (code) and data
-	Message(code_type code, std::vector<char> data);
-
-	//create message from raw data (data read from network) - need to extract code
 	Message(std::vector<char> data);
 
 	// get buffer to data
-	boost::asio::const_buffers_1 to_buffers();
+	boost::asio::const_buffers_1 to_buffers() const;
 
-	code_type get_code() const;
+	const std::vector<char>& get_data() const;
 
 private:
-	const char separator = ' ';
-
 	std::vector<char> data;
-	code_type code;
 };
