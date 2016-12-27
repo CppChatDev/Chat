@@ -6,14 +6,16 @@
 
 using boost::asio::ip::tcp;
 
-class Authenticator
+class Authenticator : public std::enable_shared_from_this<Authenticator>
 {
 public:
 	Authenticator(tcp::socket socket);
 
-	std::shared_ptr<Session> make_session();
+	void authenticate(std::function<void(std::shared_ptr<Session>)> on_success);
 
 private:
 	tcp::socket socket;
 	Database database;
+
+	std::vector<char> buffer;
 };

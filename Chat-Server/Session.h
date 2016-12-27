@@ -18,6 +18,9 @@ public:
 	void start();
 	void deliver(const Message& msg) override;
 
+	// for testing ...., changing rooms should probably occur inside session
+	void set_room(std::shared_ptr<ChatRoom> room) { this->room = room; room->join(shared_from_this()); }
+
 private:
 	void do_read();
 	void do_write();

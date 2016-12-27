@@ -33,10 +33,13 @@ void Session::do_read()
 			auto code = DataParser::parse_data(buffer);
 			if(code == DataParser::code_type::non_control)
 			{
-				// raw buffer is not needed anymore, after std::move vector is reusable
-				Message msg(move(buffer)); 
-
-				room->deliver(msg, self);
+				if(room != nullptr)
+				{
+					// raw buffer is not needed anymore, after std::move vector is reusable
+					Message msg(move(buffer));
+					room->deliver(msg, self);
+				}
+				
 				do_read();
 			}
 			else if(code == DataParser::code_type::exit)

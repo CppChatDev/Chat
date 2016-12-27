@@ -16,6 +16,6 @@ private:
 
 	tcp::acceptor acceptor;
 	tcp::socket socket;
-	ChatRoom room;
+	std::shared_ptr<ChatRoom> room;
 };
 

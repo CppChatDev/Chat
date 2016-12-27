@@ -3,9 +3,9 @@
 #include "Authenticator.h"
 
 
-Server::Server(boost::asio::io_service & io_service, short port)
-	: acceptor(io_service, tcp::endpoint(tcp::v4(), port)),
-	socket(io_service)
+Server::Server(boost::asio::io_service & io_service, short port):
+	acceptor(io_service, tcp::endpoint(tcp::v4(), port)),
+	socket(io_service), room(std::make_shared<ChatRoom>())
 {
 	acceptMessages();
 }
@@ -18,10 +18,12 @@ void Server::acceptMessages()
 		{
 			// after std::move socket is in same state as it would be
 			// after caling socket(io_service)
-			Authenticator auth(std::move(socket));
-			auto session = auth.make_session();
-
-			session->start();
+			auto auth = std::make_shared<Authenticator>(std::move(socket));
+			auth->authenticate([this](auto session)
+			{
+				session->start();
+				session->set_room(room);
+			});
 		}
 		acceptMessages();
 	});

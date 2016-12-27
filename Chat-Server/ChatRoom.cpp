@@ -26,7 +26,7 @@ void ChatRoom::deliver(const Message& msg, ChatParticipantRef sender)
 			participant->deliver(msg);
 	}
 
-	store(msg, sender);
+	//store(msg, sender);
 }
 
 void ChatRoom::store(const Message& msg, ChatParticipantRef& sender)
