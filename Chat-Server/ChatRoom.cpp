@@ -1,9 +1,7 @@
 #include "ChatRoom.h"
 #include <iostream>
 
-int ChatRoom::static_id = 1;
-
-ChatRoom::ChatRoom() : database("database.db"), id(static_id++)
+ChatRoom::ChatRoom() : database("database.db")
 {
 }
 
@@ -28,17 +26,20 @@ void ChatRoom::deliver(const Message& msg, ChatParticipantRef sender)
 			participant->deliver(msg);
 	}
 
-	store(msg, sender->get_id());
+	store(msg, sender);
 }
 
-void ChatRoom::store(const Message& msg, int sender_id)
+void ChatRoom::store(const Message& msg, ChatParticipantRef& sender)
 {
 	auto data = std::string(msg.get_data().begin(), msg.get_data().end());
+	auto sender_id = database.execute(
+		"SELECT id FROM Clients WHERE username = \"" + sender->get_username() + "\"")[0]["id"];
 
 	try
 	{
+		// TODO - room_id
 		database.execute("INSERT INTO Messages (room_id, sender_id, message) VALUES ("
-			+ std::to_string(id) + " , " + std::to_string(sender_id) + " , \"" + data + "\");");
+			+ std::to_string(1) + " , " + sender_id + " , \"" + data + "\");");
 	}
 	catch(std::exception& e)
 	{

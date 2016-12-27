@@ -11,6 +11,8 @@ DataParser::code_type DataParser::parse_data(std::vector<char>& data)
 	}
 
 	auto code = static_cast<code_type>(data[0]);
+
+	// assumes that control codes are consecutive 
 	if (code < code_type::non_control || code > code_type::exit)
 		return code_type::non_control;
 

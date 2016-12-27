@@ -16,11 +16,8 @@ public:
 	void deliver(const Message& msg, ChatParticipantRef sender);
 
 private:
-	void store(const Message& msg, int sender_id);
+	void store(const Message& msg, ChatParticipantRef& sender);
 
 	std::vector<ChatParticipantRef> participants;
 	Database database;
-	int id;
-
-	static int static_id;
 };

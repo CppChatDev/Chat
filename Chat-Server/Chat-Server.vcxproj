@@ -116,6 +116,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Authenticator.cpp" />
     <ClCompile Include="ChatParticipant.cpp" />
     <ClCompile Include="ChatRoom.cpp" />
     <ClCompile Include="DataParser.cpp" />
@@ -126,6 +127,7 @@
     <ClCompile Include="Session.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Authenticator.h" />
     <ClInclude Include="ChatParticipant.h" />
     <ClInclude Include="ChatRoom.h" />
     <ClInclude Include="DataParser.h" />

@@ -1,18 +1,10 @@
 #include "ChatParticipant.h"
 
-int ChatParticipant::static_id = 1;
-
-ChatParticipant::ChatParticipant() : id(static_id++)
+ChatParticipant::ChatParticipant(std::string username): username(move(username))
 {
-
 }
 
-int ChatParticipant::get_id() const
-{
-	return id;
-}
-
-const std::vector<char>& ChatParticipant::get_username() const
+const std::string& ChatParticipant::get_username() const
 {
 	return username;
 }

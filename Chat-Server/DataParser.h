@@ -8,6 +8,10 @@ public:
 	{
 		non_control = '0',
 		empty = '1',
+		list_rooms = '2',
+		join_room = '3',
+		leave_room = '4',
+		create_room = '5',
 		// ...
 		exit = '9'
 	};

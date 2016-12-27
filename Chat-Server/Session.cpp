@@ -1,15 +1,15 @@
 #include "Session.h"
 #include "DataParser.h"
 
-Session::Session(tcp::socket socket, ChatRoom& room)
-	: session_socket(std::move(socket)), room(room), buffer(buffer_size)
+Session::Session(tcp::socket socket, std::string username):
+	ChatParticipant(move(username)), session_socket(std::move(socket)),
+	room(nullptr), buffer(buffer_size)
 {
 
 }
 
 void Session::start()
 {
-	room.join(shared_from_this());
 	do_read();
 }
 
@@ -36,13 +36,12 @@ void Session::do_read()
 				// raw buffer is not needed anymore, after std::move vector is reusable
 				Message msg(move(buffer)); 
 
-				room.deliver(msg, self);
+				room->deliver(msg, self);
 				do_read();
 			}
 			else if(code == DataParser::code_type::exit)
 			{
-				room.leave(self);
-				session_socket.close();
+				end();
 			}
 			else
 			{
@@ -52,7 +51,7 @@ void Session::do_read()
 		}
 		else
 		{
-			room.leave(self);
+			end();
 		}
 	});
 }
@@ -73,8 +72,14 @@ void Session::do_write()
 		}
 		else
 		{
-			room.leave(self);
+			end();
 		}
 	});
 }
 
+void Session::end()
+{
+	if(room != nullptr)
+		room->leave(shared_from_this());
+	session_socket.close();
+}
