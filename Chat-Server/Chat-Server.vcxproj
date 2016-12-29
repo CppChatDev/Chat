@@ -121,8 +121,10 @@
     <ClCompile Include="ChatRoom.cpp" />
     <ClCompile Include="DataParser.cpp" />
     <ClCompile Include="Database.cpp" />
+    <ClCompile Include="Dispatcher.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Message.cpp" />
+    <ClCompile Include="ParticipantsContainer.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="Session.cpp" />
   </ItemGroup>
@@ -133,6 +135,8 @@
     <ClInclude Include="DataParser.h" />
     <ClInclude Include="Database.h" />
     <ClInclude Include="Message.h" />
+    <ClInclude Include="ParticipantsContainer.h" />
+    <ClInclude Include="Dispatcher.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="Session.h" />
   </ItemGroup>

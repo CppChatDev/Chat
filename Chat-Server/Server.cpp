@@ -5,7 +5,7 @@
 
 Server::Server(boost::asio::io_service & io_service, short port):
 	acceptor(io_service, tcp::endpoint(tcp::v4(), port)),
-	socket(io_service), room(std::make_shared<ChatRoom>())
+	socket(io_service)
 {
 	acceptMessages();
 }
@@ -19,10 +19,10 @@ void Server::acceptMessages()
 			// after std::move socket is in same state as it would be
 			// after caling socket(io_service)
 			auto auth = std::make_shared<Authenticator>(std::move(socket));
-			auth->authenticate([this](auto session)
+			auth->authenticate([this](std::shared_ptr<Session> session)
 			{
 				session->start();
-				session->set_room(room);
+				participants.add(session);
 			});
 		}
 		acceptMessages();

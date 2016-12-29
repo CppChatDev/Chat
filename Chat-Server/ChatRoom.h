@@ -5,19 +5,19 @@
 #include "ChatParticipant.h"
 #include "Database.h"
 
-using ChatParticipantRef = std::shared_ptr<ChatParticipant>;
+using ParticipantRef = std::shared_ptr<ChatParticipant>;
 
 class ChatRoom
 {
 public:
 	ChatRoom();
-	void join(ChatParticipantRef participant);
-	void leave(ChatParticipantRef participant);
-	void deliver(const Message& msg, ChatParticipantRef sender);
+	void join(ParticipantRef participant);
+	void leave(ParticipantRef participant);
+	void deliver(const Message& msg, ParticipantRef sender);
 
 private:
-	void store(const Message& msg, ChatParticipantRef& sender);
+	void store(const Message& msg, ParticipantRef& sender);
 
-	std::vector<ChatParticipantRef> participants;
+	std::vector<ParticipantRef> participants;
 	Database database;
 };

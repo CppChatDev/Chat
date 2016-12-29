@@ -3,6 +3,8 @@
 #include <boost/asio.hpp>
 
 #include "ChatRoom.h"
+#include "ParticipantsContainer.h"
+#include "Dispatcher.h"
 
 using boost::asio::ip::tcp;
 
@@ -16,6 +18,6 @@ private:
 
 	tcp::acceptor acceptor;
 	tcp::socket socket;
-	std::shared_ptr<ChatRoom> room;
+	Dispatcher dispatcher; // TODO - pass reference to session
 };
 

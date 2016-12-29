@@ -3,9 +3,10 @@
 
 ChatRoom::ChatRoom() : database("database.db")
 {
+
 }
 
-void ChatRoom::join(ChatParticipantRef participant)
+void ChatRoom::join(ParticipantRef participant)
 {
 	// moving shared_pointer does not change reference count
 	// calling push_back is also valid (but slower), because then ref count is incremented 
@@ -13,12 +14,12 @@ void ChatRoom::join(ChatParticipantRef participant)
 	participants.emplace_back(participant);
 }
 
-void ChatRoom::leave(ChatParticipantRef participant)
+void ChatRoom::leave(ParticipantRef participant)
 {
 	participants.erase(find(participants.begin(), participants.end(), participant));
 }
 
-void ChatRoom::deliver(const Message& msg, ChatParticipantRef sender)
+void ChatRoom::deliver(const Message& msg, ParticipantRef sender)
 {
 	for (auto &participant : participants)
 	{
@@ -29,7 +30,7 @@ void ChatRoom::deliver(const Message& msg, ChatParticipantRef sender)
 	//store(msg, sender);
 }
 
-void ChatRoom::store(const Message& msg, ChatParticipantRef& sender)
+void ChatRoom::store(const Message& msg, ParticipantRef& sender)
 {
 	auto data = std::string(msg.get_data().begin(), msg.get_data().end());
 	auto sender_id = database.execute(
