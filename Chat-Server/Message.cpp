@@ -7,8 +7,23 @@ Message::Message()
 
 std::string Message::get_header() const
 {
-	auto header_end =  std::find(data, data + size, header_separator);
-	return std::string(data, header_end);
+	auto header_start =  std::find(data, data + size, header_separator);
+	if (header_start + 1 < data + size)
+		return std::string(header_start + 1, data + size);
+	else
+		return "";
+}
+
+void Message::set_header(std::string header)
+{
+	auto header_start = std::find(data, data + size, header_separator);
+
+	if (header_start - data + header.size() + 1 >= 1024)
+		throw std::exception("header too large");
+
+	size = header_start - data + header.size() + 1;
+	copy(header.begin(), header.end(), header_start + 1);
+	data[size] = 0;
 }
 
 void Message::set_size(size_t size)

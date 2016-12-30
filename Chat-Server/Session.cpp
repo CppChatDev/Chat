@@ -25,7 +25,14 @@ void Session::start()
 	do_read();
 
 	Database database("database.db");
-	// TODO - send all pending messages
+	auto id = "(SELECT id FROM users WHERE username = \"" + username + "\")";
+
+	auto results = database.execute("SELECT message FROM messages \
+		WHERE recipient_id = " + id + " AND delivered = 0;");
+	for(auto &result : results)
+	{
+		// deliver(message);
+	}
 }
 
 void Session::deliver(const Message& msg)
@@ -47,6 +54,7 @@ void Session::do_read()
 			read_msg.set_size(length);
 
 			auto recipient = read_msg.get_header();	// get recipient of the message
+			read_msg.set_header(username);			// set current username (as sender)
 
 			// send message to the recipient
 			dispatcher.send(read_msg, recipient);

@@ -6,28 +6,26 @@ Dispatcher::Dispatcher() : database("database.db")
 
 void Dispatcher::send(const Message& msg, std::string recipient_name)
 {
-	//auto date = "TODO";
-	//auto insert_message = "INSERT INTO messages (sender_id, date, message) VALUES (" +
-	//	msg.get_header() +
-	//	date +
-	//	msg.get_str();
-
-	//auto add_pending_message = "INSERT INTO pending_msg (recipient_id, message_id) VALUES (\
-	//	(SELECT id FROM users WHERE username = \"" + recipient_name + "\"),\
-	//	(SELECT last_insert_rowid())";
-
+	auto date			= "TODO";
+	auto recipient_id	= "(SELECT id FROM users WHERE username = \"" + recipient_name	+ "\")";
+	auto sender_id		= "(SELECT id FROM users WHERE username = \"" + msg.get_header()	+ "\")";
+	auto delivered		= '0';
 
 	std::lock_guard<std::mutex> lock(db_mutex);
 	auto recipient = get_participant(recipient_name);				// should it be under mutex?
-	//database.execute(insert_message);	// store message in db
-	if (recipient != nullptr)			// recipient is online
+	if (recipient != nullptr)	// recipient is online
 	{
 		recipient->deliver(msg);
+		delivered = '1';
 	}
-	else								// recipinet is not online 
-	{
-	//	database.execute(add_pending_message);
-	}
+
+	database.execute("INSERT INTO messages (sender_id, recipient_id, date, message, delivered)\
+		VALUES ("					+
+		sender_id					+ ", " +
+		recipient_id				+ ", " +
+		'\"' + date	+ '\"'			+ ", " +
+		'\"' + msg.get_str() + '\"' + ", " +
+		delivered					+ ");");
 }
 
 void Dispatcher::add_participant(const std::shared_ptr<ChatParticipant>& participant)

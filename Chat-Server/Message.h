@@ -8,6 +8,7 @@ class Message
 public:
 	Message();
 	std::string get_header() const;
+	void set_header(std::string header);
 	void set_size(size_t size);
 
 	const char* get_str() const;
