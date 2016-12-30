@@ -27,11 +27,14 @@ void Session::start()
 	Database database("database.db");
 	auto id = "(SELECT id FROM users WHERE username = \"" + username + "\")";
 
-	auto results = database.execute("SELECT message FROM messages \
+	auto results = database.execute("SELECT id, message FROM messages \
 		WHERE recipient_id = " + id + " AND delivered = 0;");
 	for(auto &result : results)
 	{
-		// deliver(message);
+		Message msg(move(result["message"]));
+		deliver(msg);
+
+		database.execute("UPDATE messages SET delivered = 1 WHERE id = " + result["id"] + ";");
 	}
 }
 
@@ -63,7 +66,10 @@ void Session::do_read()
 			}
 			catch(std::exception &e)
 			{
-				// TODO
+				// TODO - create separate exceptions for:
+				// - too big header
+				// - no header
+				// ...
 			}
 
 			do_read();
