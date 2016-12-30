@@ -2,40 +2,49 @@
 
 Message::Message()
 {
+	data.resize(1024);
 	size = 0;
 }
 
-std::string Message::get_header() const
+Message::Message(data_type data): data(move(data))
 {
-	auto header_start =  std::find(data, data + size, header_separator);
-	if (header_start + 1 < data + size)
-		return std::string(header_start + 1, data + size);
-	else
-		return "";
+	// TODO - how to handle too big data?
+	size = this->data.size();
+	this->data.resize(1024);
 }
 
-void Message::set_header(std::string header)
+data_type Message::get_header() const
 {
-	auto header_start = std::find(data, data + size, header_separator);
+	auto header_end = data.find(header_separator);
+	if (header_end >= size || header_end == std::string::npos)
+		throw std::exception("no header");
 
-	if (header_start - data + header.size() + 1 >= 1024)
+	return data.substr(0, header_end);
+}
+
+void Message::set_header(data_type header)
+{
+	//TODO extend set header to cases when header is not yet in the message
+
+	auto header_end = data.find(header_separator);
+	auto new_size = header.size() + size - header_end;
+	if (new_size >= 1024)
 		throw std::exception("header too large");
 
-	size = header_start - data + header.size() + 1;
-	copy(header.begin(), header.end(), header_start + 1);
-	data[size] = 0;
+	data.replace(0, header_end, header);
+	data.resize(1024);
+	set_size(new_size);
 }
 
 void Message::set_size(size_t size)
 {
 	this->size = size;
-	data[size] = 0;		// add null, so that calling get_str() on data
-						// only returns sequnce from 0 to size
+	data[size] = 0;	//add null, so that calling c_str() on data only returns sequnce from 0 to size
 }
 
 const char* Message::get_str() const
 {
-	return data;
+	return data.c_str();
 }
 
 boost::asio::const_buffers_1 Message::const_buffer() const

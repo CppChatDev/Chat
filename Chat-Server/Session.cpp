@@ -53,11 +53,18 @@ void Session::do_read()
 		{
 			read_msg.set_size(length);
 
-			auto recipient = read_msg.get_header();	// get recipient of the message
-			read_msg.set_header(username);			// set current username (as sender)
+			try
+			{
+				auto recipient = read_msg.get_header();	// get recipient of the message
+				read_msg.set_header(username);			// set current username (as sender)
 
-			// send message to the recipient
-			dispatcher.send(read_msg, recipient);
+				// send message to the recipient
+				dispatcher.send(read_msg, recipient);
+			}
+			catch(std::exception &e)
+			{
+				// TODO
+			}
 
 			do_read();
 		}
