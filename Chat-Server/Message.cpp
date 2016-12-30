@@ -1,40 +1,36 @@
-#include <algorithm>
-
 #include "Message.h"
 
-// vector is passed by value and moved so it covers 2 cases:
-// - when vector is passed by value there is copy constrcutor and then moving constructor involved
-// - when vector is passed by r-reference 2 copy constructors are involved
-// 2 ctrs - one taking 'const vector&' and one 'vector&&' would be more efficient(but more writing)
-Message::Message(std::vector<char> data): data(move(data))
+Message::Message()
 {
-
+	size = 0;
 }
 
-std::string Message::get_header()
+std::string Message::get_header() const
 {
-	// for now - message format is: header@message
-	auto end_it = find(data.begin(), data.end(), '@');
-	return std::string(data.begin(), end_it);
+	auto header_end =  std::find(data, data + size, header_separator);
+	return std::string(data, header_end);
 }
 
-void Message::set_header(std::string header)
+void Message::set_size(size_t size)
 {
-	auto end_it = find(data.begin(), data.end(), '@');
-
-	if(end_it != data.end())
-		data.erase(data.begin(), end_it);	// delete old header
-
-	data.insert(data.begin(), header.begin(), header.end());
+	this->size = size;
+	data[size] = 0;		// add null, so that calling get_str() on data
+						// only returns sequnce from 0 to size
 }
 
-boost::asio::const_buffers_1 Message::to_buffers() const
+const char* Message::get_str() const
 {
-	boost::asio::const_buffer buffer = boost::asio::buffer(data);
+	return data;
+}
+
+boost::asio::const_buffers_1 Message::const_buffer() const
+{
+	boost::asio::const_buffer buffer = boost::asio::buffer(&data[0], size);
 	return boost::asio::const_buffers_1(buffer);
 }
 
-const std::vector<char>& Message::get_data() const
+boost::asio::mutable_buffers_1 Message::mutable_buffer()
 {
-	return data;
+	boost::asio::mutable_buffer buffer = boost::asio::buffer(&data[0], 1024);
+	return boost::asio::mutable_buffers_1(buffer);
 }

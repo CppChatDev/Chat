@@ -6,17 +6,17 @@
 class Message
 {
 public:
-	Message(std::vector<char> data);
+	Message();
+	std::string get_header() const;
+	void set_size(size_t size);
 
-	std::string get_header();
-
-	void set_header(std::string header);
-
-	// get buffer to data
-	boost::asio::const_buffers_1 to_buffers() const;
-
-	const std::vector<char>& get_data() const;
+	const char* get_str() const;
+	boost::asio::const_buffers_1 const_buffer() const;
+	boost::asio::mutable_buffers_1 mutable_buffer();
 
 private:
-	std::vector<char> data;
+	char data[1024];
+	size_t size = 0;
+
+	const char header_separator = '@';
 };

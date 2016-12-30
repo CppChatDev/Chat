@@ -1,23 +1,30 @@
 #include "Session.h"
-#include "DataParser.h"
+#include "Database.h"
+#include "Dispatcher.h"
 
-Session::Session(tcp::socket socket, std::string username) :
+Session::Session(tcp::socket socket, Dispatcher& dispatcher, std::string username) :
 	ChatParticipant(move(username)),
-	session_socket(std::move(socket)),
-	buffer(buffer_size)
+	dispatcher(dispatcher),
+	session_socket(std::move(socket))
 {
-
+	
 }
 
 Session::~Session()
 {
-	// TODO - remove reference to this session from Container
+	// how to deal with dangling weak pointers in dispatcher?
+	// call Dispatcher.prune()?
+
+	Database database("database.db");
+	// save messages that are still in write_queue
 }
 
 void Session::start()
 {
+	dispatcher.add_participant(shared_from_this());
 	do_read();
 
+	Database database("database.db");
 	// TODO - send all pending messages
 }
 
@@ -32,37 +39,17 @@ void Session::deliver(const Message& msg)
 void Session::do_read()
 {
 	auto self(shared_from_this());
-	buffer.resize(buffer_size);
-	session_socket.async_read_some(boost::asio::buffer(buffer),
+	session_socket.async_read_some(read_msg.mutable_buffer(),
 		[this, self](boost::system::error_code ec, size_t length)
 	{
 		if (!ec)
 		{
-			buffer.resize(length);
+			read_msg.set_size(length);
 
-			//auto code = DataParser::parse_data(buffer);
-			//if (code == DataParser::code_type::non_control)
-			//{
-
-			//}
-			//else if (code == DataParser::code_type::exit)
-			//{
-			//	end();
-			//}
-			//else
-			//{
-			//	// TODO: handle codes
-			//	do_read();
-			//}
-
-			// raw buffer is not needed anymore, after std::move vector is reusable
-			Message msg(move(buffer));
-
-			auto recipient = msg.get_header();	// get recipient of the message
-			msg.set_header(username);			// set senderof the message 
+			auto recipient = read_msg.get_header();	// get recipient of the message
 
 			// send message to the recipient
-			// TODO
+			dispatcher.send(read_msg, recipient);
 
 			do_read();
 		}
@@ -76,7 +63,7 @@ void Session::do_read()
 void Session::do_write()
 {
 	auto self(shared_from_this());
-	boost::asio::async_write(session_socket, msg_queue.front().to_buffers(),
+	boost::asio::async_write(session_socket, msg_queue.front().const_buffer(),
 		[this, self](boost::system::error_code ec, size_t length)
 	{
 		if (!ec)

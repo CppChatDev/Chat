@@ -4,25 +4,29 @@ Dispatcher::Dispatcher() : database("database.db")
 {
 }
 
-void Dispatcher::send(Message msg, std::string recipient_name)
+void Dispatcher::send(const Message& msg, std::string recipient_name)
 {
-	auto date = "TODO";
-	auto recipient = get_participant(recipient_name);
-	auto insert_message = "INSERT INTO messages (sender_id, date, message) VALUES (" +
-		msg.get_header() +
-		date +
-		msg.get_data();
+	//auto date = "TODO";
+	//auto insert_message = "INSERT INTO messages (sender_id, date, message) VALUES (" +
+	//	msg.get_header() +
+	//	date +
+	//	msg.get_str();
 
-	auto query = "INSERT INTO user_msg (recipient_id, message_id, delivered) VALUES (\
-		(SELECT id FROM users WHERE username = " + recipient_name;
+	//auto add_pending_message = "INSERT INTO pending_msg (recipient_id, message_id) VALUES (\
+	//	(SELECT id FROM users WHERE username = \"" + recipient_name + "\"),\
+	//	(SELECT last_insert_rowid())";
 
-	if (recipient != nullptr)	// recipient is online
+
+	std::lock_guard<std::mutex> lock(db_mutex);
+	auto recipient = get_participant(recipient_name);				// should it be under mutex?
+	//database.execute(insert_message);	// store message in db
+	if (recipient != nullptr)			// recipient is online
 	{
 		recipient->deliver(msg);
 	}
-	else
+	else								// recipinet is not online 
 	{
-		database.execute("");
+	//	database.execute(add_pending_message);
 	}
 }
 
@@ -31,13 +35,15 @@ void Dispatcher::add_participant(const std::shared_ptr<ChatParticipant>& partici
 	participants.push_back(participant);
 }
 
-void Dispatcher::remove_participant(const std::shared_ptr<ChatParticipant>& participant)
+void Dispatcher::prune()
 {
-	std::remove_if(participants.begin(), participants.end(),
-		[&participant](const std::weak_ptr<ChatParticipant>& x)
+	for (auto it = participants.begin(); it != participants.end();)
 	{
-		return participant == x.lock();
-	});
+		if (it->expired())
+			participants.erase(it);
+		else
+			++it;
+	}
 }
 
 std::shared_ptr<ChatParticipant> Dispatcher::get_participant(std::string username)

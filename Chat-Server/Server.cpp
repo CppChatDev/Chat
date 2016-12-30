@@ -18,11 +18,10 @@ void Server::acceptMessages()
 		{
 			// after std::move socket is in same state as it would be
 			// after caling socket(io_service)
-			auto auth = std::make_shared<Authenticator>(std::move(socket));
+			auto auth = std::make_shared<Authenticator>(std::move(socket), dispatcher);
 			auth->authenticate([this](std::shared_ptr<Session> session)
 			{
 				session->start();
-				participants.add(session);
 			});
 		}
 		acceptMessages();
