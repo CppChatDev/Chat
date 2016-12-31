@@ -1,39 +1,66 @@
 #include "Database.h"
 
-Database::Database(std::string db_name)
+Database::Database(std::string db_name):
+	db(nullptr)
 {
-	if (sqlite3_open(db_name.c_str(), &db) != SQLITE_OK)
-		throw std::exception("There was a problem opening the database.");
+	sqlite3* sqlite3_db;
+	if (sqlite3_open(db_name.c_str(), &sqlite3_db) != SQLITE_OK)
+		throw std::exception(sqlite3_errmsg(db.get()));
+	
+	// encapsulates sqlite3 pointer in unique pointer, sqlite3_close is destructor
+	db = sql_pointer<sqlite3>(sqlite3_db, sqlite3_close);
 }
 
-Database::~Database()
-{
-	sqlite3_close(db);
-}
 
-std::vector<db_element> Database::execute(std::string query)
+std::vector<row> Database::execute(std::string query, std::vector<std::string> params) const
 {
-	auto sql_callback = [](void *data, int argc, char **argv, char **cols) -> int
+	std::vector<row> data;
+
+	// prepare statement 
+	sqlite3_stmt* stmt_p;
+	auto result = sqlite3_prepare_v2(db.get(), query.c_str(), -1, &stmt_p, nullptr);
+	if (result != SQLITE_OK)
+		throw std::exception(sqlite3_errmsg(db.get()));
+
+	auto stmt = sql_pointer<sqlite3_stmt>(stmt_p, sqlite3_finalize);
+
+	// bind parameters to query
+	for (auto i = 0; i < params.size(); ++i)
 	{
-		db_element element;
-		for (auto i = 0; i < argc; i++)
-			element[cols[i]] = argv[i];
-
-		reinterpret_cast<std::vector<db_element>*>(data)->push_back(element);
-		return 0;
-	};
-
-	std::vector<db_element> items;
-	char *err_msg = nullptr;
-
-	/* Execute SQL statement */
-	auto rc = sqlite3_exec(db, query.c_str(), sql_callback, &items, &err_msg);
-	if (rc != SQLITE_OK) {
-		std::exception e(err_msg);
-		sqlite3_free(err_msg);
-
-		throw e;
+		result = sqlite3_bind_text(stmt.get(), i + 1, params[i].c_str(), -1, SQLITE_STATIC);
+		if (result != SQLITE_OK)
+			throw std::exception(sqlite3_errmsg(db.get()));
 	}
 
-	return items;
+	// execute query
+	while(1)
+	{
+		result = sqlite3_step(stmt.get());
+		if(result == SQLITE_ROW)
+		{
+			auto count = sqlite3_data_count(stmt.get());
+			row curr_row;
+			for (auto i = 0; i < count; ++i)
+			{
+				auto name = std::string(sqlite3_column_name(stmt.get(), i));
+				auto text = std::string(reinterpret_cast<const char*>(
+					sqlite3_column_text(stmt.get(), i)));
+
+				curr_row[name] = text;
+			}
+
+			data.emplace_back(curr_row);
+		}
+		else if (result == SQLITE_DONE)
+		{
+			break;
+		}
+		else
+		{
+			throw std::exception(sqlite3_errmsg(db.get()));
+		}
+	} 
+
+	return data;
 }
+

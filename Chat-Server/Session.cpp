@@ -7,7 +7,7 @@ Session::Session(tcp::socket socket, Dispatcher& dispatcher, std::string usernam
 	dispatcher(dispatcher),
 	session_socket(std::move(socket))
 {
-	
+
 }
 
 Session::~Session()
@@ -24,17 +24,20 @@ void Session::start()
 	dispatcher.add_participant(shared_from_this());
 	do_read();
 
-	Database database("database.db");
-	auto id = "(SELECT id FROM users WHERE username = \"" + username + "\")";
+	auto select = "SELECT id, message FROM messages WHERE\
+		recipient_id = (SELECT id FROM users WHERE username = ? )\
+		AND delivered = 0 ;";
+	auto update = "UPDATE messages SET delivered = 1 WHERE id = ? ;";
 
-	auto results = database.execute("SELECT id, message FROM messages \
-		WHERE recipient_id = " + id + " AND delivered = 0;");
-	for(auto &result : results)
+	Database database("database.db");
+	auto results = database.execute(select, { username });
+
+	for (auto &result : results)
 	{
 		Message msg(move(result["message"]));
 		deliver(msg);
 
-		database.execute("UPDATE messages SET delivered = 1 WHERE id = " + result["id"] + ";");
+		database.execute(update, { result["id"] });
 	}
 }
 
@@ -61,10 +64,10 @@ void Session::do_read()
 				auto recipient = read_msg.get_header();	// get recipient of the message
 				read_msg.set_header(username);			// set current username (as sender)
 
-				// send message to the recipient
+														// send message to the recipient
 				dispatcher.send(read_msg, recipient);
 			}
-			catch(std::exception &e)
+			catch (std::exception &e)
 			{
 				// TODO - create separate exceptions for:
 				// - too big header

@@ -4,16 +4,20 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <functional>
+#include <memory>
 
-using db_element = std::map<std::string, std::string>;
+template<class T>
+using sql_pointer = std::unique_ptr<T, std::function<void(T*)>>;
+
+using row = std::map<std::string, std::string>;
 
 class Database
 {
 public:
 	Database(std::string db_name);
-	~Database();
 
-	std::vector<db_element> execute(std::string query);
+	std::vector<row> execute(std::string query, std::vector<std::string> params) const;
 private:
-	sqlite3* db;
+	sql_pointer<sqlite3> db;
 };

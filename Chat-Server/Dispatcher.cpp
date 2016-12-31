@@ -7,25 +7,23 @@ Dispatcher::Dispatcher() : database("database.db")
 void Dispatcher::send(const Message& msg, std::string recipient_name)
 {
 	auto date			= "TODO";
-	auto recipient_id	= "(SELECT id FROM users WHERE username = \"" + recipient_name	+ "\")";
-	auto sender_id		= "(SELECT id FROM users WHERE username = \"" + msg.get_header()	+ "\")";
-	auto delivered		= '0';
+	auto delivered		= "0";
 
 	std::lock_guard<std::mutex> lock(db_mutex);
 	auto recipient = get_participant(recipient_name);				// should it be under mutex?
 	if (recipient != nullptr)	// recipient is online
 	{
 		recipient->deliver(msg);
-		delivered = '1';
+		delivered = "1";
 	}
 
-	database.execute("INSERT INTO messages (sender_id, recipient_id, date, message, delivered)\
-		VALUES ("					+
-		sender_id					+ ", " +
-		recipient_id				+ ", " +
-		'\"' + date	+ '\"'			+ ", " +
-		'\"' + msg.get_str() + '\"' + ", " +
-		delivered					+ ");");
+	database.execute("INSERT INTO messages (sender_id, recipient_id, date, message, delivered)	\
+		VALUES (																				\
+		(SELECT id FROM users WHERE username = ? ),												\
+		(SELECT id FROM users WHERE username = ? ),												\
+		 ?, ?, ? );",
+		{ msg.get_header(), recipient_name, date, msg.get_str(), delivered });
+
 }
 
 void Dispatcher::add_participant(const std::shared_ptr<ChatParticipant>& participant)
