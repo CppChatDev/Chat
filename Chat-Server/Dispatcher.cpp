@@ -1,4 +1,5 @@
 #include "Dispatcher.h"
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 Dispatcher::Dispatcher() : database("database.db")
 {
@@ -6,8 +7,8 @@ Dispatcher::Dispatcher() : database("database.db")
 
 void Dispatcher::send(const Message& msg, std::string recipient_name)
 {
-	auto date			= "TODO";
-	auto delivered		= "0";
+	auto date		= to_simple_string(boost::posix_time::second_clock::local_time());
+	auto delivered	= "0";
 
 	std::lock_guard<std::mutex> lock(db_mutex);
 	auto recipient = get_participant(recipient_name);				// should it be under mutex?
