@@ -16,13 +16,20 @@ void Server::acceptMessages()
 	{
 		if (!e)
 		{
-			// after std::move socket is in same state as it would be
-			// after caling socket(io_service)
-			auto auth = std::make_shared<Authenticator>(std::move(socket), dispatcher);
-			auth->authenticate([this](std::shared_ptr<Session> session)
+			try
 			{
-				session->start();
-			});
+				// after std::move socket is in same state as it would be
+				// after caling socket(io_service)
+				auto auth = std::make_shared<Authenticator>(std::move(socket), dispatcher);
+				auth->authenticate([this](std::shared_ptr<Session> session)
+				{
+					session->start();
+				});
+			}
+			catch(std::exception& ex)
+			{
+				// TODO - authenticator may throw (database) and session's start method(database)
+			}
 		}
 		acceptMessages();
 	});

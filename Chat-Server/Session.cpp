@@ -10,41 +10,18 @@ Session::Session(tcp::socket socket, Dispatcher& dispatcher, std::string usernam
 
 }
 
-Session::~Session()
-{
-	// how to deal with dangling weak pointers in dispatcher?
-	// call Dispatcher.prune()?
-
-	Database database("database.db");
-	// save messages that are still in write_queue
-}
-
 void Session::start()
 {
 	dispatcher.add_participant(shared_from_this());
 	do_read();
 
-	auto select = "SELECT id, message FROM messages WHERE\
-		recipient_id = (SELECT id FROM users WHERE username = ? )\
-		AND delivered = 0 ;";
-	auto update = "UPDATE messages SET delivered = 1 WHERE id = ? ;";
-
-	Database database("database.db");
-	auto results = database.execute(select, { username });
-
-	for (auto &result : results)
-	{
-		Message msg(move(result["message"]));
-		deliver(msg);
-
-		database.execute(update, { result["id"] });
-	}
+	deliver_pending();
 }
 
-void Session::deliver(const Message& msg)
+void Session::deliver(const Message& msg, std::string msg_id)
 {
 	auto write_in_progress = !msg_queue.empty();
-	msg_queue.push(msg);
+	msg_queue.push({ msg, msg_id });
 	if (!write_in_progress)
 		do_write();
 }
@@ -64,15 +41,15 @@ void Session::do_read()
 				auto recipient = read_msg.get_header();	// get recipient of the message
 				read_msg.set_header(username);			// set current username (as sender)
 
-														// send message to the recipient
+				// send message to the recipient
 				dispatcher.send(read_msg, recipient);
 			}
 			catch (std::exception &e)
 			{
-				// TODO - create separate exceptions for:
+				// TODO - create separate cases for:
 				// - too big header
 				// - no header
-				// ...
+				// - exception from dispatcher
 			}
 
 			do_read();
@@ -87,11 +64,15 @@ void Session::do_read()
 void Session::do_write()
 {
 	auto self(shared_from_this());
-	boost::asio::async_write(session_socket, msg_queue.front().const_buffer(),
+	boost::asio::async_write(session_socket, msg_queue.front().first.const_buffer(),
 		[this, self](boost::system::error_code ec, size_t length)
 	{
 		if (!ec)
 		{
+			// mark message as delivered
+			dispatcher.get_db().execute("UPDATE messages SET delivered = 1 WHERE id = ?",
+				{msg_queue.front().second});
+
 			msg_queue.pop();
 			if (!msg_queue.empty())
 			{
@@ -103,4 +84,21 @@ void Session::do_write()
 			// TODO
 		}
 	});
+}
+
+void Session::deliver_pending()
+{
+	// TODO what if there is db exception here?
+	auto select = "SELECT id, message FROM messages WHERE\
+		recipient_id = (SELECT id FROM users WHERE username = ? )\
+		AND delivered = 0 ;";
+
+	Database database("database.db");
+	auto results = database.execute(select, { username });
+
+	for (auto &result : results)
+	{
+		Message msg(move(result["message"]));
+		deliver(msg, result["id"]);
+	}
 }

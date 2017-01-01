@@ -8,14 +8,16 @@
 
 // TODO
 // it would be better if every connection (chatroom) had
-// it's own database connection (thread safety)
+// it's own database connection (thread pool ?)
 class Dispatcher
 {
 public:
 	Dispatcher();
 	void send(const Message& msg, std::string recipient);
-	void add_participant(const std::shared_ptr<ChatParticipant>& participant);
+	void add_participant(const std::shared_ptr<ChatParticipant>& participant); 
 	void prune();
+
+	Database& get_db();
 
 private:
 	std::shared_ptr<ChatParticipant> get_participant(std::string username);

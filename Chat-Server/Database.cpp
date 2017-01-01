@@ -7,7 +7,7 @@ Database::Database(std::string db_name):
 	if (sqlite3_open(db_name.c_str(), &sqlite3_db) != SQLITE_OK)
 		throw std::exception(sqlite3_errmsg(db.get()));
 	
-	// encapsulates sqlite3 pointer in unique pointer, sqlite3_close is destructor
+	// encapsulates sqlite3 pointer in unique pointer, sqlite3_close is deleter
 	db = sql_pointer<sqlite3>(sqlite3_db, sqlite3_close);
 }
 
@@ -63,4 +63,3 @@ std::vector<row> Database::execute(std::string query, std::vector<std::string> p
 
 	return data;
 }
-

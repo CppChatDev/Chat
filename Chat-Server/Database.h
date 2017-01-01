@@ -15,9 +15,9 @@ using row = std::map<std::string, std::string>;
 class Database
 {
 public:
-	Database(std::string db_name);
+	explicit Database(std::string db_name);
 
-	std::vector<row> execute(std::string query, std::vector<std::string> params) const;
+	std::vector<row> execute(std::string query, std::vector<std::string> params = {}) const;
 private:
 	sql_pointer<sqlite3> db;
 };

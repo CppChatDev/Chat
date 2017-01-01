@@ -10,7 +10,7 @@ public:
 	virtual ~ChatParticipant() {}
 
 	const std::string& get_username() const;
-	virtual void deliver(const Message& msg) = 0;
+	virtual void deliver(const Message& msg, std::string msg_id) = 0;
 
 protected:
 	std::string username;

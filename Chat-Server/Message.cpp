@@ -39,7 +39,9 @@ void Message::set_header(data_type header)
 void Message::set_size(size_t size)
 {
 	this->size = size;
-	data[size] = 0;	//add null, so that calling c_str() on data only returns sequnce from 0 to size
+
+	//add null, so that calling c_str() on data only returns sequnce from 0 to size
+	data[size] = 0;	
 }
 
 const char* Message::get_str() const

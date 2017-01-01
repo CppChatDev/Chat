@@ -14,20 +14,18 @@ class Session : public ChatParticipant, public std::enable_shared_from_this<Sess
 {
 public:
 	Session(tcp::socket socket, Dispatcher& dispatcher, std::string username);
-	~Session();
 
 	void start();
-	void deliver(const Message& msg) override;
-
+	void deliver(const Message& msg, std::string msg_id) override;
 
 private:
 	void do_read();
 	void do_write();
+	void deliver_pending();	
 
 	Dispatcher& dispatcher;
 	tcp::socket session_socket;
-	std::queue<Message> msg_queue; 
-	// TODO - save msg_queu to db if connection closes and there are pending messages
+	std::queue<std::pair<Message, std::string>> msg_queue; // holds queue of {message, message_id} 
 
 	Message read_msg;
 };
