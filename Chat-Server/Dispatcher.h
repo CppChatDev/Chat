@@ -7,7 +7,7 @@
 #include "Database.h"
 
 // TODO
-// it would be better if every connection (chatroom) had
+// maybe it would be better if every connection (chatroom) had
 // it's own database connection (thread pool ?)
 class Dispatcher
 {

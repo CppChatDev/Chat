@@ -6,7 +6,7 @@
 class ChatParticipant
 {
 public:
-	ChatParticipant(std::string username);
+	explicit ChatParticipant(std::string username);
 	virtual ~ChatParticipant() {}
 
 	const std::string& get_username() const;
