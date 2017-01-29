@@ -117,7 +117,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Authenticator.cpp" />
-    <ClCompile Include="ChatParticipant.cpp" />
+    <ClCompile Include="User.cpp" />
     <ClCompile Include="Database.cpp" />
     <ClCompile Include="Dispatcher.cpp" />
     <ClCompile Include="main.cpp" />
@@ -127,7 +127,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Authenticator.h" />
-    <ClInclude Include="ChatParticipant.h" />
+    <ClInclude Include="User.h" />
     <ClInclude Include="Database.h" />
     <ClInclude Include="Message.h" />
     <ClInclude Include="Dispatcher.h" />

@@ -22,6 +22,8 @@ void Server::acceptMessages()
 				// after caling socket(io_service)
 				auto auth = std::make_shared<Authenticator>(std::move(socket), dispatcher);
 				auth->authenticate([this](std::shared_ptr<Session> session)
+					// this is on_success method which is called from authenticator
+					// here, we have session which was created inside authenticator
 				{
 					session->start();
 				});

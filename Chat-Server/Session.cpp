@@ -3,7 +3,7 @@
 #include "Dispatcher.h"
 
 Session::Session(tcp::socket socket, Dispatcher& dispatcher, std::string username) :
-	ChatParticipant(move(username)),
+	User(move(username)),
 	dispatcher(dispatcher),
 	session_socket(std::move(socket))
 {

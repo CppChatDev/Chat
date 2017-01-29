@@ -3,11 +3,12 @@
 
 #include "Message.h"
 
-class ChatParticipant
+// Base class for user
+class User
 {
 public:
-	explicit ChatParticipant(std::string username);
-	virtual ~ChatParticipant() {}
+	explicit User(std::string username);
+	virtual ~User() {}
 
 	const std::string& get_username() const;
 	virtual void deliver(const Message& msg, std::string msg_id) = 0;

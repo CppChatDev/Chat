@@ -6,6 +6,10 @@
 
 using boost::asio::ip::tcp;
 
+// Responsible for user authentication
+// If authentication succeeds, it creates new instance of 'Session' and calls on_succes function
+// with this newly created Session as parameter
+// Contructor receives ref to dispatcher because Session's constructor takes it as a prameter
 class Authenticator : public std::enable_shared_from_this<Authenticator>
 {
 public:
