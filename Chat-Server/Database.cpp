@@ -5,7 +5,7 @@ Database::Database(std::string db_name):
 {
 	sqlite3* sqlite3_db;
 	if (sqlite3_open(db_name.c_str(), &sqlite3_db) != SQLITE_OK)
-		throw std::exception(sqlite3_errmsg(db.get()));
+		throw std::runtime_error(sqlite3_errmsg(db.get()));
 	
 	// encapsulates sqlite3 pointer in unique pointer, sqlite3_close is deleter
 	db = sql_pointer<sqlite3>(sqlite3_db, sqlite3_close);
@@ -20,7 +20,7 @@ std::vector<row> Database::execute(std::string query, std::vector<std::string> p
 	sqlite3_stmt* stmt_p;
 	auto result = sqlite3_prepare_v2(db.get(), query.c_str(), -1, &stmt_p, nullptr);
 	if (result != SQLITE_OK)
-		throw std::exception(sqlite3_errmsg(db.get()));
+		throw std::runtime_error(sqlite3_errmsg(db.get()));
 
 	auto stmt = sql_pointer<sqlite3_stmt>(stmt_p, sqlite3_finalize);
 
@@ -29,7 +29,7 @@ std::vector<row> Database::execute(std::string query, std::vector<std::string> p
 	{
 		result = sqlite3_bind_text(stmt.get(), i + 1, params[i].c_str(), -1, SQLITE_STATIC);
 		if (result != SQLITE_OK)
-			throw std::exception(sqlite3_errmsg(db.get()));
+			throw std::runtime_error(sqlite3_errmsg(db.get()));
 	}
 
 	// execute query
@@ -57,7 +57,7 @@ std::vector<row> Database::execute(std::string query, std::vector<std::string> p
 		}
 		else
 		{
-			throw std::exception(sqlite3_errmsg(db.get()));
+			throw std::runtime_error(sqlite3_errmsg(db.get()));
 		}
 	} 
 

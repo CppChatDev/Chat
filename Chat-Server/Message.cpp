@@ -17,7 +17,7 @@ data_type Message::get_header() const
 {
 	auto header_end = data.find(header_separator);
 	if (header_end >= size || header_end == std::string::npos)
-		throw std::exception("no header");
+		throw std::runtime_error("no header");
 
 	return data.substr(0, header_end);
 }
@@ -29,7 +29,7 @@ void Message::set_header(data_type header)
 	auto header_end = data.find(header_separator);
 	auto new_size = header.size() + size - header_end;
 	if (new_size >= 1024)
-		throw std::exception("header too large");
+		throw std::runtime_error("header too large");
 
 	data.replace(0, header_end, header);
 	data.resize(1024);
