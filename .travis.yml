@@ -21,5 +21,7 @@ notifications:
     on_success: change
     on_failure: change
   slack:
+    rooms:
+      secure: AP/vjfFobnQL90W2MKN8I6UlTst5p0DHtbZCMGl4Ny4Q/Ll6tIIT/i2OGkWHwPSJBSmuQnA1D/tZAWMRzSy9n+n4C+jtV8jRcdhywzjyJx0cZNkxj/lrW6Xz22dzXdt47deoCaiIKV9+rYLPIhskm4oJ0n2y8E/VNutg2ytP31hQOAKUFnCyJDVm4WxbRRKqhuA6PKDTDpOxZVNgV9o2Sl/Rdjs/h8bzcoeQ29x0AG2QuovdyGnxg9SSpy+js0V4tplOr4RM/+BK0VfuHmVLyfGVRp0pOPELDFFfFcbnim51jzyGLk4o+N754XZiJTGbmeMxekjciDw/PfohU0exC5OSdbENDKc8sta7aPxB+Sew8kVg0ka5MqmPB7g79ulS9RXwGgRMAL0brN2OJjZ43AcakFPokHmSDbUPaYeNfa9E5EBlWhflxyZtukpYKWU9cDna70+V1ywX/I+qBscBdZn2OjNBgO/6ehGLBS7vnG/BcAJHoOiz/2+Ttx/nYEplc6PmrxuUt5qrUIcEgbe5ZxLVpJL7W2IpMr1ympkRauFXnnOG+7EOa/bW88XCRIoWUr4HZ4+o5QXrXepRhcOkDho3UxPks5QvkLR/nZV7xNJA3lAjxuxIcscEZe6ESD3BrE2RdXFIWMdKPZyLYSJEfMN3dyvyekXeAmUti8IVsCE=
     on_success: change
     on_failure: always
