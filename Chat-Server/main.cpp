@@ -9,7 +9,7 @@
 
 using boost::asio::ip::tcp;
 
-int main(int argc, char** argv)
+int main(void)
 {
 	boost::asio::io_service io_service;
 

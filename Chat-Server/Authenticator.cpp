@@ -3,8 +3,8 @@
 
 using boost::asio::ip::tcp;
 
-Authenticator::Authenticator(tcp::socket socket, Dispatcher& dispatcher) :
-	socket(std::move(socket)), database("database.db"), dispatcher(dispatcher)
+Authenticator::Authenticator(tcp::socket other_socket, Dispatcher& other_dispatcher) :
+	socket(std::move(other_socket)), database("database.db"), dispatcher(other_dispatcher)
 {
 
 }
@@ -16,6 +16,8 @@ void Authenticator::authenticate(std::function<void(std::shared_ptr<Session>)> o
 	socket.async_read_some(boost::asio::buffer(buffer, 1024),
 		[this, on_success, self](boost::system::error_code ec, size_t length)
 	{
+		if (ec)
+			return;
 		// TODO
 		// authenticate
 		buffer[length] = 0;

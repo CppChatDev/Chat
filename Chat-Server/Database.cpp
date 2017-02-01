@@ -25,7 +25,7 @@ std::vector<row> Database::execute(std::string query, std::vector<std::string> p
 	auto stmt = sql_pointer<sqlite3_stmt>(stmt_p, sqlite3_finalize);
 
 	// bind parameters to query
-	for (auto i = 0; i < params.size(); ++i)
+	for (size_t i = 0; i < params.size(); ++i)
 	{
 		result = sqlite3_bind_text(stmt.get(), i + 1, params[i].c_str(), -1, SQLITE_STATIC);
 		if (result != SQLITE_OK)

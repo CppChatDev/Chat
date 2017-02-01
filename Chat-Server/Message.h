@@ -34,5 +34,3 @@ private:
 
 	const char header_separator = '@';
 };
-
-

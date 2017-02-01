@@ -6,7 +6,7 @@ Message::Message()
 	size = 0;
 }
 
-Message::Message(data_type data): data(move(data))
+Message::Message(data_type other_data): data(move(other_data))
 {
 	// TODO - how to handle too big data?
 	size = this->data.size();
@@ -36,12 +36,12 @@ void Message::set_header(data_type header)
 	set_size(new_size);
 }
 
-void Message::set_size(size_t size)
+void Message::set_size(size_t new_size)
 {
-	this->size = size;
+	this->size = new_size;
 
 	//add null, so that calling c_str() on data only returns sequnce from 0 to size
-	data[size] = 0;	
+	data[new_size] = '\0';
 }
 
 const char* Message::get_str() const

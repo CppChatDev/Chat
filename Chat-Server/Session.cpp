@@ -2,9 +2,9 @@
 #include "Database.h"
 #include "Dispatcher.h"
 
-Session::Session(tcp::socket socket, Dispatcher& dispatcher, std::string username) :
+Session::Session(tcp::socket socket, Dispatcher& other_dispatcher, std::string username) :
 	User(move(username)),
-	dispatcher(dispatcher),
+	dispatcher(other_dispatcher),
 	session_socket(std::move(socket))
 {
 
@@ -64,10 +64,11 @@ void Session::do_read()
 void Session::do_write()
 {
 	auto self(shared_from_this());
-	boost::asio::async_write(session_socket, msg_queue.front().first.const_buffer(),
-		[this, self](boost::system::error_code ec, size_t length)
+	const boost::asio::const_buffers_1& buf = msg_queue.front().first.const_buffer();
+	boost::asio::async_write(session_socket, buf,
+		[this, self, buf](boost::system::error_code ec, size_t length)
 	{
-		if (!ec)
+		if (!ec && length == boost::asio::buffer_size(buf))
 		{
 			// mark message as delivered
 			dispatcher.get_db().execute("UPDATE messages SET delivered = 1 WHERE id = ?",
