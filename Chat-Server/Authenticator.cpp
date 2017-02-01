@@ -21,7 +21,7 @@ void Authenticator::authenticate(std::function<void(std::shared_ptr<Session>)> o
 		// TODO
 		// authenticate
 		buffer[length] = 0;
-		bool isAuthenticated = false;
+		bool is_authenticated = false;
 		auto users = database.execute("SELECT username FROM users");
 		for (auto&& user : users)
 		{
@@ -29,12 +29,12 @@ void Authenticator::authenticate(std::function<void(std::shared_ptr<Session>)> o
 			{
 				if (row.second == buffer)
 				{
-					isAuthenticated = true;
+					is_authenticated = true;
 				}
 			}
 		}
 		
-		if (isAuthenticated)
+		if (is_authenticated)
 		{
 			on_success(std::make_shared<Session>(std::move(socket), dispatcher, buffer));
 		}

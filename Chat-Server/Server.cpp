@@ -7,10 +7,10 @@ Server::Server(boost::asio::io_service & io_service, short port):
 	acceptor(io_service, tcp::endpoint(tcp::v4(), port)),
 	socket(io_service)
 {
-	acceptMessages();
+	accept_messages();
 }
 
-void Server::acceptMessages()
+void Server::accept_messages()
 {
 	acceptor.async_accept(socket, [this](boost::system::error_code e)
 	{
@@ -33,6 +33,6 @@ void Server::acceptMessages()
 				// TODO - authenticator may throw (database) and session's start method(database)
 			}
 		}
-		acceptMessages();
+		accept_messages();
 	});
 }

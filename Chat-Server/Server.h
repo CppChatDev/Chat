@@ -12,7 +12,7 @@ public:
 	Server(boost::asio::io_service &io_service, short port);
 
 private:
-	void acceptMessages();
+	void accept_messages();
 
 	tcp::acceptor acceptor;
 	tcp::socket socket;
