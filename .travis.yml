@@ -14,7 +14,7 @@ addons:
 compiler: clang
 
 script:
-  - make -C Chat-Server --environment-overrides
+  - EXTRA_CXXFLAGS=-Werror make -C Chat-Server
 
 notifications:
   email:

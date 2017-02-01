@@ -1,5 +1,5 @@
 CXX := clang++
-CXXFLAGS := -O2 -std=c++14 -stdlib=libc++ -march=native -ggdb -pipe -Wall -Wextra -Wshadow
+CXXFLAGS := -O2 -std=c++14 -stdlib=libc++ -march=native -ggdb -pipe -Wall -Wextra -Wshadow $(EXTRA_CXXFLAGS)
 LDFLAGS := -lsqlite3 -lboost_system -lboost_date_time
 
 CPP_FILES := $(wildcard *.cpp)
