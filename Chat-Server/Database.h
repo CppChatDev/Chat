@@ -8,7 +8,7 @@
 #include <memory>
 
 template<class T>
-using sql_pointer = std::unique_ptr<T, std::function<void(T*)>>;
+using sql_pointer = std::unique_ptr<T, std::function<int(T*)>>;
 
 using row = std::map<std::string, std::string>;
 

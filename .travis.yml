@@ -9,6 +9,7 @@ addons:
       - libboost-system-dev
       - libboost-date-time-dev
       - libsqlite3-dev
+      - libc++-dev
 
 compiler: clang
 
