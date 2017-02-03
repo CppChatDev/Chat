@@ -9,7 +9,7 @@ main: $(OBJECTS)
 	$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
 
 format:
-	clang-format -i *.cpp *.h
+	clang-format-3.8 -i *.cpp *.h
 
 clean:
 	rm -f *.o
