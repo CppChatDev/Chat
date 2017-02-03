@@ -8,11 +8,14 @@ OBJECTS := $(CPP_FILES:.cpp=.o)
 main: $(OBJECTS)
 	$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
 
+format:
+	clang-format -i *.cpp *.h
+
 clean:
 	rm -f *.o
 	rm -f main
 
-.PHONY: clean
+.PHONY: clean format
 
 CXXFLAGS += -MMD
 -include $(OBJECTS:.o=.d)
