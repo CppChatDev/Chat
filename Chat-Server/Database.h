@@ -1,13 +1,13 @@
 #pragma once
 
+#include <functional>
+#include <map>
+#include <memory>
 #include <sqlite3.h>
 #include <string>
 #include <vector>
-#include <map>
-#include <functional>
-#include <memory>
 
-template<class T>
+template <class T>
 using sql_pointer = std::unique_ptr<T, std::function<int(T*)>>;
 
 using row = std::map<std::string, std::string>;
@@ -26,6 +26,7 @@ public:
 	// Example: query = "Select ? from X where id = ?", paramas = {"name", "5"}
 	// so resulting query is: "Select "name" from X where id = "5"
 	std::vector<row> execute(std::string query, std::vector<std::string> params = {}) const;
+
 private:
 	sql_pointer<sqlite3> db;
 };

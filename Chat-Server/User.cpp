@@ -1,6 +1,6 @@
 #include "User.h"
 
-User::User(std::string other_username): username(move(other_username))
+User::User(std::string other_username) : username(move(other_username))
 {
 }
 

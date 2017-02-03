@@ -1,19 +1,16 @@
 #include "Server.h"
-#include "Session.h"
 #include "Authenticator.h"
+#include "Session.h"
 
-
-Server::Server(boost::asio::io_service & io_service, short port):
-	acceptor(io_service, tcp::endpoint(tcp::v4(), port)),
-	socket(io_service)
+Server::Server(boost::asio::io_service& io_service, short port)
+	: acceptor(io_service, tcp::endpoint(tcp::v4(), port)), socket(io_service)
 {
 	accept_messages();
 }
 
 void Server::accept_messages()
 {
-	acceptor.async_accept(socket, [this](boost::system::error_code e)
-	{
+	acceptor.async_accept(socket, [this](boost::system::error_code e) {
 		if (!e)
 		{
 			try
@@ -24,11 +21,9 @@ void Server::accept_messages()
 				auth->authenticate([this](std::shared_ptr<Session> session)
 					// this is on_success method which is called from authenticator
 					// here, we have session which was created inside authenticator
-				{
-					session->start();
-				});
+					{ session->start(); });
 			}
-			catch(std::exception& ex)
+			catch (std::exception& ex)
 			{
 				// TODO - authenticator may throw (database) and session's start method(database)
 			}

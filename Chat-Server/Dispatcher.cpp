@@ -17,14 +17,13 @@ void Dispatcher::send(const Message& msg, std::string recipient_name)
 		(SELECT id FROM users WHERE username = ? ),												\
 		(SELECT id FROM users WHERE username = ? ),												\
 		 ?, ?, ? );",
-		 { msg.get_header(), recipient_name, date, msg.get_str(), "0" });
+		{msg.get_header(), recipient_name, date, msg.get_str(), "0"});
 
 	// get id of last inserted row in "messages"
-	auto msg_id = database.
-		execute("SELECT seq FROM sqlite_sequence WHERE name = \"messages\"")[0]["seq"];
+	auto msg_id = database.execute("SELECT seq FROM sqlite_sequence WHERE name = \"messages\"")[0]["seq"];
 
-	auto recipient = get_participant(recipient_name);			// TODO - should it be under mutex?
-	if (recipient != nullptr)	// if recipient is online then deliver the message
+	auto recipient = get_participant(recipient_name); // TODO - should it be under mutex?
+	if (recipient != nullptr) // if recipient is online then deliver the message
 	{
 		recipient->deliver(msg, msg_id);
 	}
@@ -53,14 +52,13 @@ Database& Dispatcher::get_db()
 
 std::shared_ptr<User> Dispatcher::get_participant(std::string username)
 {
-	auto participant = std::find_if(participants.begin(), participants.end(),
-		[&username](const std::weak_ptr<User>& x)
-	{
-		if (auto shared = x.lock())
-			if (shared->get_username() == username)
-				return true;
-		return false;
-	});
+	auto participant =
+		std::find_if(participants.begin(), participants.end(), [&username](const std::weak_ptr<User>& x) {
+			if (auto shared = x.lock())
+				if (shared->get_username() == username)
+					return true;
+			return false;
+		});
 
 	if (participant != participants.end())
 		return participant->lock();
