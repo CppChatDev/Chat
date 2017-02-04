@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
 #include <boost/asio.hpp>
+#include <vector>
 
 using data_type = std::string;
 

@@ -1,9 +1,9 @@
 #pragma once
 
-#include <memory>
-#include <vector>
-#include <queue>
 #include <boost/asio.hpp>
+#include <memory>
+#include <queue>
+#include <vector>
 
 #include "User.h"
 
@@ -28,11 +28,11 @@ private:
 
 	// delivers messages which where send to THIS user while he was offline
 	// this messages are in database and have status "unsend"
-	void deliver_pending();	
+	void deliver_pending();
 
 	Dispatcher& dispatcher;
 	tcp::socket session_socket;
-	std::queue<std::pair<Message, std::string>> msg_queue;	// holds queue of {message, message_id} 
+	std::queue<std::pair<Message, std::string>> msg_queue; // holds queue of {message, message_id}
 
-	Message read_msg;										// buffer for incoming messages
+	Message read_msg; // buffer for incoming messages
 };

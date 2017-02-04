@@ -6,7 +6,7 @@ Message::Message()
 	size = 0;
 }
 
-Message::Message(data_type other_data): data(move(other_data))
+Message::Message(data_type other_data) : data(move(other_data))
 {
 	// TODO - how to handle too big data?
 	size = this->data.size();
@@ -24,7 +24,7 @@ data_type Message::get_header() const
 
 void Message::set_header(data_type header)
 {
-	//TODO extend set header to cases when header is not yet in the message
+	// TODO extend set header to cases when header is not yet in the message
 
 	auto header_end = data.find(header_separator);
 	auto new_size = header.size() + size - header_end;
@@ -40,7 +40,7 @@ void Message::set_size(size_t new_size)
 {
 	this->size = new_size;
 
-	//add null, so that calling c_str() on data only returns sequnce from 0 to size
+	// add null, so that calling c_str() on data only returns sequnce from 0 to size
 	data[new_size] = '\0';
 }
 

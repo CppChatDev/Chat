@@ -1,22 +1,20 @@
 #include "Database.h"
 
-Database::Database(std::string db_name):
-	db(nullptr)
+Database::Database(std::string db_name) : db(nullptr)
 {
 	sqlite3* sqlite3_db;
 	if (sqlite3_open(db_name.c_str(), &sqlite3_db) != SQLITE_OK)
 		throw std::runtime_error(sqlite3_errmsg(db.get()));
-	
+
 	// encapsulates sqlite3 pointer in unique pointer, sqlite3_close is deleter
 	db = sql_pointer<sqlite3>(sqlite3_db, sqlite3_close);
 }
-
 
 std::vector<row> Database::execute(std::string query, std::vector<std::string> params) const
 {
 	std::vector<row> data;
 
-	// prepare statement 
+	// prepare statement
 	sqlite3_stmt* stmt_p;
 	auto result = sqlite3_prepare_v2(db.get(), query.c_str(), -1, &stmt_p, nullptr);
 	if (result != SQLITE_OK)
@@ -33,18 +31,17 @@ std::vector<row> Database::execute(std::string query, std::vector<std::string> p
 	}
 
 	// execute query
-	while(1)
+	while (1)
 	{
 		result = sqlite3_step(stmt.get());
-		if(result == SQLITE_ROW)
+		if (result == SQLITE_ROW)
 		{
 			auto count = sqlite3_data_count(stmt.get());
 			row curr_row;
 			for (auto i = 0; i < count; ++i)
 			{
 				auto name = std::string(sqlite3_column_name(stmt.get(), i));
-				auto text = std::string(reinterpret_cast<const char*>(
-					sqlite3_column_text(stmt.get(), i)));
+				auto text = std::string(reinterpret_cast<const char*>(sqlite3_column_text(stmt.get(), i)));
 
 				curr_row[name] = text;
 			}
@@ -59,7 +56,7 @@ std::vector<row> Database::execute(std::string query, std::vector<std::string> p
 		{
 			throw std::runtime_error(sqlite3_errmsg(db.get()));
 		}
-	} 
+	}
 
 	return data;
 }

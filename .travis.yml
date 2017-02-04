@@ -10,11 +10,14 @@ addons:
       - libboost-date-time-dev
       - libsqlite3-dev
       - libc++-dev
+      - clang-format-3.8
 
 compiler: clang
 
 script:
   - EXTRA_CXXFLAGS=-Werror make -C Chat-Server
+  - make -C Chat-Server format
+  - git diff --no-color --exit-code
 
 notifications:
   email:
