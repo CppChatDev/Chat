@@ -5,6 +5,10 @@
 /Chat-Server/*.o
 /Chat-Server/main
 
+# KDevelop files
+/ChatServer/.kdev4/*
+*.kdev4
+
 # https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 # User-specific files
 *.suo
