@@ -18,19 +18,13 @@ void Authenticator::authenticate(std::function<void(std::shared_ptr<Session>)> o
 				return;
 			// TODO
 			// authenticate
+			while (buffer[length - 1] == '\n' || buffer[length - 1] == '\r')
+				length--;
+
 			buffer[length] = 0;
 			bool is_authenticated = false;
-			auto users = database.execute("SELECT username FROM users");
-			for (auto&& user : users)
-			{
-				for (auto&& row : user)
-				{
-					if (row.second == buffer)
-					{
-						is_authenticated = true;
-					}
-				}
-			}
+			auto users = database.execute("SELECT username FROM users WHERE username = ?", {buffer});
+			is_authenticated = users.size();
 
 			if (is_authenticated)
 			{
