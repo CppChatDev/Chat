@@ -1,11 +1,11 @@
 #pragma once
 #include <boost/asio.hpp>
-#include <utility>
 #include <string>
+#include <utility>
 
 #include "Database.h"
-#include "Session.h"
 #include "Registration.h"
+#include "Session.h"
 
 using boost::asio::ip::tcp;
 
@@ -24,6 +24,5 @@ private:
 	tcp::socket socket;
 	Database database;
 	Dispatcher& dispatcher;
-    Registration registration;
 	char buffer[1024];
 };

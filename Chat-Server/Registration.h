@@ -1,17 +1,13 @@
 #pragma once
 
 #include "Database.h"
-#include <vector>
+#include <boost/algorithm/string.hpp>
 #include <string>
 #include <utility>
-#include <boost/algorithm/string.hpp>
+#include <vector>
 
-class Registration 
+class Registration
 {
 public:
-    Registration();
-    std::pair<std::string, bool> handleRegistration(const char[]);
-    
-private:
-    Database database;
+	std::pair<std::string, bool> handleRegistration(const char[], Database&);
 };
