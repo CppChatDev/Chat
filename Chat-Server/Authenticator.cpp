@@ -32,16 +32,16 @@ void Authenticator::authenticate(std::function<void(std::shared_ptr<Session>)> o
 			auto registration_result = registration.handle_registration(buffer, database);
 			std::string registered_username = std::get<0>(registration_result);
 			bool register_success = std::get<1>(registration_result);
-			if (registered_username != "0" && register_success == true)
+			if (registered_username != "0" && register_success)
 			{
 				on_success(std::make_shared<Session>(
 					std::move(socket), dispatcher, registered_username.c_str()));
 			}
-			else if (registered_username != "0" && register_success == false)
+			else if (registered_username != "0" && !register_success)
 			{
 				socket.write_some(boost::asio::buffer("That username is already taken!"));
 			}
-			else if (registered_username == "0")
+			else // registered_username == "0"
 			{
 				socket.write_some(boost::asio::buffer(
 					"Invalid format. To register please type \"register <username> <password>\""));
@@ -49,9 +49,8 @@ void Authenticator::authenticate(std::function<void(std::shared_ptr<Session>)> o
 		}
 		else
 		{
-			bool is_authenticated = false;
 			auto users = database.execute("SELECT username FROM users WHERE username = ?", {buffer});
-			is_authenticated = users.size();
+			bool is_authenticated = users.size();
 
 			if (is_authenticated)
 			{

@@ -11,24 +11,25 @@ std::pair<std::string, bool> Registration::handle_registration(const char regist
 		return {"0", false};
 	}
 
-	auto users =
-		database.execute("SELECT username FROM users WHERE username = ?", {registration_parts.at(1)});
+	auto& username = registration_parts.at(1);
+	auto& password = registration_parts.at(2);
+
+	auto users = database.execute("SELECT username FROM users WHERE username = ?", {username});
 	if (users.size() != 0)
 	{
-		return {registration_parts.at(1), false}; // username already exists, abort!
+		return {username, false}; // username already exists, abort!
 	}
 
 	// std::cout << "Your username is: " << registration_parts.at(1) << " and password is: " <<
 	// registration_parts.at(2) << "\n";
 
-	database.execute("INSERT INTO users(username, password) VALUES(?, ?)",
-		{registration_parts.at(1), registration_parts.at(2)});
+	database.execute("INSERT INTO users(username, password) VALUES(?, ?)", {username, password});
 
-	users = database.execute("SELECT username FROM users WHERE username = ?", {registration_parts.at(1)});
+	users = database.execute("SELECT username FROM users WHERE username = ?", {username});
 	if (users.size() != 0)
 	{
-		return {registration_parts.at(1), true}; // was the user successfully added to the database?
+		return {username, true}; // was the user successfully added to the database?
 	}
 
-	return {registration_parts.at(1), false};
+	return {username, false};
 }
