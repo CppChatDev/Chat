@@ -1,4 +1,5 @@
 #include "Registration.h"
+#include "bcrypt.h"
 
 std::pair<std::string, bool> Registration::handle_registration(const char registration_string[], Database& database)
 {
@@ -23,7 +24,18 @@ std::pair<std::string, bool> Registration::handle_registration(const char regist
 	// std::cout << "Your username is: " << registration_parts.at(1) << " and password is: " <<
 	// registration_parts.at(2) << "\n";
 
-	database.execute("INSERT INTO users(username, password) VALUES(?, ?)", {username, password});
+	char salt[BCRYPT_HASHSIZE];
+	char hash[BCRYPT_HASHSIZE];
+	int ret;
+
+	ret = bcrypt_gensalt(14, salt);
+	if (ret != 0)
+		throw std::runtime_error("generating salt error");
+	ret = bcrypt_hashpw(password.c_str(), salt, hash);
+	if (ret != 0)
+		throw std::runtime_error("hashing error");
+
+	database.execute("INSERT INTO users(username, password) VALUES(?, ?)", {username, hash});
 
 	users = database.execute("SELECT username FROM users WHERE username = ?", {username});
 	if (users.size() != 0)
