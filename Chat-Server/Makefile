@@ -1,13 +1,12 @@
 CXX := clang++
 CXXFLAGS := -O2 -std=c++11 -stdlib=libstdc++ -march=native -ggdb -pipe -Wall -Wextra -Wshadow $(EXTRA_CXXFLAGS)
 LDFLAGS := -lsqlite3 -lboost_system -lboost_date_time
-LIBS := bcrypt.a
 
 CPP_FILES := $(wildcard *.cpp)
 OBJECTS := $(CPP_FILES:.cpp=.o)
 
-main: $(OBJECTS)
-	$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) $(LIBS) -o $@
+main: $(OBJECTS) bcrypt.a
+	$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) bcrypt.a -o $@
 
 format:
 	clang-format-3.8 -i *.cpp *.h
