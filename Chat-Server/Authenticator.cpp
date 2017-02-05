@@ -1,7 +1,7 @@
 #include "Authenticator.h"
 #include <boost/algorithm/string.hpp>
 #include <boost/asio.hpp>
-#include <iostream>
+
 using boost::asio::ip::tcp;
 
 Authenticator::Authenticator(tcp::socket other_socket, Dispatcher& other_dispatcher)
