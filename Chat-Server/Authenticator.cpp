@@ -25,23 +25,23 @@ void Authenticator::authenticate(std::function<void(std::shared_ptr<Session>)> o
 
 		buffer[length] = 0;
 
-		std::vector<std::string> bufferParts;
-		boost::split(bufferParts, buffer, boost::is_any_of(" "));
-		if (bufferParts.size() >= 1 && bufferParts.at(0) == "register")
+		std::vector<std::string> buffer_parts;
+		boost::split(buffer_parts, buffer, boost::is_any_of(" "));
+		if (buffer_parts.size() >= 1 && buffer_parts.at(0) == "register")
 		{
-			auto registrationResult = registration.handleRegistration(buffer, database);
-			std::string registeredUsername = std::get<0>(registrationResult);
-			bool registerSuccess = std::get<1>(registrationResult);
-			if (registeredUsername != "0" && registerSuccess == true)
+			auto registration_result = registration.handle_registration(buffer, database);
+			std::string registered_username = std::get<0>(registration_result);
+			bool register_success = std::get<1>(registration_result);
+			if (registered_username != "0" && register_success == true)
 			{
 				on_success(std::make_shared<Session>(
-					std::move(socket), dispatcher, registeredUsername.c_str()));
+					std::move(socket), dispatcher, registered_username.c_str()));
 			}
-			else if (registeredUsername != "0" && registerSuccess == false)
+			else if (registered_username != "0" && register_success == false)
 			{
 				socket.write_some(boost::asio::buffer("That username is already taken!"));
 			}
-			else if (registeredUsername == "0")
+			else if (registered_username == "0")
 			{
 				socket.write_some(boost::asio::buffer(
 					"Invalid format. To register please type \"register <username> <password>\""));

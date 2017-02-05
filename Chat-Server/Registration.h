@@ -9,5 +9,5 @@
 class Registration
 {
 public:
-	std::pair<std::string, bool> handleRegistration(const char[], Database&);
+	std::pair<std::string, bool> handle_registration(const char[], Database&);
 };
