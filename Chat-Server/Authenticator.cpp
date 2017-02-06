@@ -1,4 +1,5 @@
 #include "Authenticator.h"
+#include "HashGenerator.h"
 #include <boost/algorithm/string.hpp>
 #include <boost/asio.hpp>
 
@@ -18,8 +19,7 @@ void Authenticator::authenticate(std::function<void(std::shared_ptr<Session>)> o
 																  boost::system::error_code ec, size_t length) {
 		if (ec)
 			return;
-		// TODO
-		// authenticate
+
 		while (buffer[length - 1] == '\n' || buffer[length - 1] == '\r')
 			length--;
 
@@ -27,6 +27,7 @@ void Authenticator::authenticate(std::function<void(std::shared_ptr<Session>)> o
 
 		std::vector<std::string> buffer_parts;
 		boost::split(buffer_parts, buffer, boost::is_any_of(" "));
+
 		if (buffer_parts.size() >= 1 && buffer_parts.at(0) == "register")
 		{
 			auto registration_result = registration.handle_registration(buffer, database);
@@ -47,19 +48,29 @@ void Authenticator::authenticate(std::function<void(std::shared_ptr<Session>)> o
 					"Invalid format. To register please type \"register <username> <password>\""));
 			}
 		}
-		else
+		else if (buffer_parts.size() >= 1 && buffer_parts.at(0) == "login")
 		{
-			auto users = database.execute("SELECT username FROM users WHERE username = ?", {buffer});
-			bool is_authenticated = users.size();
+			auto& username = buffer_parts.at(1);
+			auto& password = buffer_parts.at(2);
+
+			auto users =
+				database.execute("SELECT username, password FROM users WHERE username = ?", {username});
+			bool is_authenticated = false;
+
+			if (users.size() > 0)
+			{
+				HashGenerator generator;
+				is_authenticated = generator.check_hash(password, users[0]["password"]);
+			}
 
 			if (is_authenticated)
 			{
-				on_success(std::make_shared<Session>(std::move(socket), dispatcher, buffer));
+				on_success(std::make_shared<Session>(std::move(socket), dispatcher, username));
 			}
 			else
 			{
 				socket.write_some(
-					boost::asio::buffer("Failed to authenticate: Username not registered"));
+					boost::asio::buffer("Failed to authenticate: wrong password or username."));
 			}
 		}
 
