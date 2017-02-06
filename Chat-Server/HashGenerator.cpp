@@ -3,7 +3,7 @@
 #include "HashGenerator.h"
 #include "bcrypt.h"
 
-std::string HashGenerator::generate_hash(std::string& input, int work_factor)
+std::string HashGenerator::generate_hash(const std::string& input, int work_factor)
 {
 	char salt[BCRYPT_HASHSIZE];
 	char hash[BCRYPT_HASHSIZE];
@@ -18,7 +18,7 @@ std::string HashGenerator::generate_hash(std::string& input, int work_factor)
 	return std::string(hash);
 }
 
-bool HashGenerator::check_hash(std::string& input, std::string& hash)
+bool HashGenerator::check_hash(const std::string& input, const std::string& hash)
 {
 	int ret = bcrypt_checkpw(input.c_str(), hash.c_str());
 	if (ret == -1)
