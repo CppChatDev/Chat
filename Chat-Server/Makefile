@@ -4,9 +4,10 @@ LDFLAGS := -lsqlite3 -lboost_system -lboost_date_time
 
 CPP_FILES := $(wildcard *.cpp)
 OBJECTS := $(CPP_FILES:.cpp=.o)
+LIBS := $(wildcard libs/*.a)
 
-main: $(OBJECTS) bcrypt.a
-	$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) bcrypt.a -o $@
+main: $(OBJECTS) $(LIBS)
+	$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
 
 format:
 	clang-format-3.8 -i *.cpp *.h
