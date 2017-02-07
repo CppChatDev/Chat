@@ -5,8 +5,9 @@ CLANG_FORMAT := $(shell command -v clang-format-3.8 2> /dev/null)
 
 CPP_FILES := $(wildcard *.cpp)
 OBJECTS := $(CPP_FILES:.cpp=.o)
+LIBS := $(wildcard libs/*.a)
 
-main: $(OBJECTS)
+main: $(OBJECTS) $(LIBS)
 	$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
 
 format:

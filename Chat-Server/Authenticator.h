@@ -1,7 +1,10 @@
 #pragma once
 #include <boost/asio.hpp>
+#include <string>
+#include <utility>
 
 #include "Database.h"
+#include "Registration.h"
 #include "Session.h"
 
 using boost::asio::ip::tcp;
@@ -21,6 +24,5 @@ private:
 	tcp::socket socket;
 	Database database;
 	Dispatcher& dispatcher;
-
 	char buffer[1024];
 };
