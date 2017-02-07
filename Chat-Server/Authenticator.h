@@ -4,7 +4,6 @@
 #include <utility>
 
 #include "Database.h"
-#include "Registration.h"
 #include "Session.h"
 
 using boost::asio::ip::tcp;
@@ -21,6 +20,9 @@ public:
 	void authenticate(std::function<void(std::shared_ptr<Session>)> on_success);
 
 private:
+	std::string generate_hash(const std::string& input, int work_factor = 14);
+	bool check_hash(const std::string& input, const std::string& hash);
+
 	tcp::socket socket;
 	Database database;
 	Dispatcher& dispatcher;
